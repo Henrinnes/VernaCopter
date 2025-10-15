@@ -14,12 +14,15 @@ Modules:
 Author: Teun van de Laar
 """
 import logging
+
+# from exceptiongroup import catch
+
 from LLM.NL_to_STL import NL_to_STL
 from STL.STL_to_path import STLSolver, STL_formulas
 from STL.trajectory_analysis import TrajectoryAnalyzer
 from basics.logger import color_text
 from basics.scenarios import Scenarios
-from basics.config import Default_parameters
+from basics.config import Default_parameters, One_shot_parameters
 from visuals.run_simulation import simulate
 from visuals.visualization import Visualizer
 
@@ -92,6 +95,7 @@ def main(pars=Default_parameters()):
             
             # Translate conversation into STL specification
             spec = translator.get_specs(messages)
+
             processing_feedback = False
 
         else:
@@ -99,6 +103,19 @@ def main(pars=Default_parameters()):
             spec = syntax_checked_spec
             syntax_checked_spec = None
         print("Extracted specification: ", spec)
+        try:
+            objects = scenario.objects
+            # Code that might raise an error
+            specs = eval(spec)
+            print(specs.name)
+
+        except AttributeError:
+            # Handles the case where .name doesn't exist
+            print("This spec object has no 'name' attribute.")
+
+        except Exception as e:
+            # Catches any other unexpected error
+            print(f"Something went wrong: {e}")
 
         # Initialize the solver with the STL specification
         solver = STLSolver(spec, scenario.objects, x0, T,)
@@ -117,9 +134,11 @@ def main(pars=Default_parameters()):
             inside_objects_array = trajectory_analyzer.get_inside_objects_array()  # Get array with trajectory analysis
             visualizer = Visualizer(x, scenario)                            # Initialize the visualizer
             fig, ax = visualizer.visualize_trajectory()                     # Visualize the trajectory
-            plt.pause(1)                                                    # Pause for visualization
+            plt.show()
+            input("press key to continue")                                                    # Pause for visualization
             fig, ax = trajectory_analyzer.visualize_spec(inside_objects_array) # Visualize the trajectory analysis
-            plt.pause(1)                                                    # Pause for visualization
+            plt.show()
+            input("press key to continue")                             # Pause for visualization
 
             # Specification checker
             if pars.spec_checker_enabled and spec_checker_iteration < pars.spec_check_limit:
@@ -212,4 +231,5 @@ def main(pars=Default_parameters()):
 
 if __name__ == "__main__":
     pars = Default_parameters()
+    # pars = One_shot_parameters()
     main()
