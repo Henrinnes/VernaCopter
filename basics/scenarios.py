@@ -47,15 +47,28 @@ class Scenarios:
             dict: A dictionary where keys are object names and values are tuples
                   defining the spatial bounds (xmin, xmax, ymin, ymax, zmin, zmax).
         """
+        # if self.scenario_name == "reach_avoid":
+        #     objects = {"goal": (4., 5., 4., 5., 4., 5.),
+        #                "obstacle1": (-3., -1., -0.5, 1.5, 0.5, 2.5),
+        #                "obstacle2": (-4.5, -3., 0., 2.25, 0.5, 2.),
+        #                "obstacle3": (-2., -1., 4., 5., 3.5, 4.5),
+        #                "obstacle4": (3., 4., -3.5, -2.5, 1., 2.),
+        #                "obstacle5": (4., 5., 0., 1., 2., 3.5),
+        #                "obstacle6": (2., 3.5, 1.5, 2.5, 3.75, 5.),
+        #                "obstacle7": (-2., -1., -2., -1., 1., 2.),
+        #                }
+            
+        # changed the heights such that the drone does not simply fly over all obstacles
+        # when just making the obstacles higher, the drone will fly below them (through the ground..)
         if self.scenario_name == "reach_avoid":
-            objects = {"goal": (4., 5., 4., 5., 4., 5.),
-                       "obstacle1": (-3., -1., -0.5, 1.5, 0.5, 2.5),
-                       "obstacle2": (-4.5, -3., 0., 2.25, 0.5, 2.),
-                       "obstacle3": (-2., -1., 4., 5., 3.5, 4.5),
-                       "obstacle4": (3., 4., -3.5, -2.5, 1., 2.),
-                       "obstacle5": (4., 5., 0., 1., 2., 3.5),
-                       "obstacle6": (2., 3.5, 1.5, 2.5, 3.75, 5.),
-                       "obstacle7": (-2., -1., -2., -1., 1., 2.),
+            objects = {"goal": (4., 5., 4., 5., 1., 2.),
+                       "obstacle1": (-3., -1., -0.5, 1.5, -10, 10.),
+                       "obstacle2": (-4.5, -3., 0., 2.25, -10, 10.),
+                       "obstacle3": (-2., -1., 4., 5., -10., 10),
+                       "obstacle4": (3., 4., -3.5, -2.5, -10., 10.),
+                       "obstacle5": (4., 5., 0., 1., -10., 10),
+                       "obstacle6": (2., 3.5, 1.5, 2.5, -10., 10.),
+                       "obstacle7": (-2., -1., -2., -1., -10., 10.),
                        }
 
         elif self.scenario_name == "treasure_hunt":
@@ -110,5 +123,6 @@ class Scenarios:
         if self.scenario_name == "reach_avoid":
             automated_user_input = "Reach the goal while avoiding all obstacles."
         elif self.scenario_name == "treasure_hunt":
-            automated_user_input = "Go to the key in the first 30 seconds, then go to the chest. Avoid all walls. Stay in the room at all times. The door will open when you reach the key."
+            automated_user_input = ("Go to the key in the first 30 seconds, then go to the chest. Avoid all walls. "
+                                    "Stay in the room at all times. The door will open when you reach the key.")
         return automated_user_input
