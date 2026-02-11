@@ -37,5 +37,11 @@ venv.bak/
 # Ignore the `src` folder if it's generated or temporary
 src
 
+<<<<<<< HEAD
 # Ignore compiled python code
 *.pyc
+=======
+launch/
+>>>>>>> 232ab79 (Ignore launch directory temporarily (Windows compatibility))
+
+launch/

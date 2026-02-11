@@ -1,0 +1,8 @@
+crazyflies:
+  - id: 9
+    channel: 80
+    id_type: uri
+    uri: radio://0/80/2M/E7E7E7E709
+    tf_prefix: cf9
+    initial_position: [0.0, 0.0, 0.0]
+    type: default
