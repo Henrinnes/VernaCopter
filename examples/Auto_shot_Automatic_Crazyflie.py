@@ -29,7 +29,12 @@ try:
 
     # Step 4: Fly waypoints with Crazyflie (only if task succeeded)
     if task_accomplished:
-        fly_waypoints(waypoints)
+        # fly_waypoints(waypoints)
+        # fly_waypoints(waypoints, uri="radio://0/80/2M/E7E7E7E701")
+        wps = [(0,0,0), (0.2,0,0), (0.2,0.2,0), (0,0.2,0), (0,0,0)]
+        fly_waypoints(wps, uri="radio://0/80/2M/E7E7E7E701")
+
+
     else:
         print("[WARNING] Task was not accomplished. Skipping flight.")
 
