@@ -1,49 +1,42 @@
 """
 Auto_shot_Automatic_Crazyflie.py
 
-Runs the full VernaCopter + Crazyflie pipeline automatically using predefined parameters.
+Runs the full VernaCopter pipeline and then deploys the trajectory on a
+Crazyflie drone.  Works on Windows and Linux with just a Flow deck.
+
+Usage:
+    python -m examples.Auto_shot_Automatic_Crazyflie
 """
 
 from basics.config import One_shot_parameters
 from main import main
 from experiments.save_results import save_results
-from .crazy_controller import fly_waypoints
+from examples.fly_trajectory import fly_trajectory
 
-import numpy as np
-
-scenario_name = "treasure_hunt"  # or "reach_avoid"
+scenario_name = "reach_avoid"   # or "treasure_hunt"
 pars = One_shot_parameters(scenario_name=scenario_name)
 
 try:
-    # Step 1: Run the VernaCopter planner (generates trajectory as all_x)
+    # Step 1: Plan trajectory via VernaCopter
     messages, task_accomplished, all_x = main(pars)
 
-    # Step 2: Convert all_x (3xN NumPy array) to list of (x, y, z) tuples
-    waypoints = list(zip(all_x[0], all_x[1], all_x[2]))
-
-    # Step 3: Scale for physical environment
-    SCALE_FOR_REAL_ENV = True
-    SCALE_FACTOR = 0.3
-    if SCALE_FOR_REAL_ENV:
-        waypoints = [(x * SCALE_FACTOR, y * SCALE_FACTOR, z * SCALE_FACTOR) for (x, y, z) in waypoints]
-
-    # Step 4: Fly waypoints with Crazyflie (only if task succeeded)
-    if task_accomplished:
-        # fly_waypoints(waypoints)
-        # fly_waypoints(waypoints, uri="radio://0/80/2M/E7E7E7E701")
-        wps = [(0,0,0), (0.2,0,0), (0.2,0.2,0), (0,0.2,0), (0,0,0)]
-        fly_waypoints(wps, uri="radio://0/80/2M/E7E7E7E701")
-
-
-    else:
-        print("[WARNING] Task was not accomplished. Skipping flight.")
+    # Step 2: Deploy on drone if task succeeded
+    if task_accomplished and pars.deploy_on_drone:
+        fly_trajectory(
+            all_x,
+            uri=pars.drone_uri,                   # None = auto-scan
+            scale_factor=pars.scale_factor,
+            waypoint_duration=pars.waypoint_duration,
+            takeoff_height=pars.takeoff_height,
+        )
+    elif not task_accomplished:
+        print("[WARNING] Task was not accomplished — skipping flight.")
 
 except Exception as e:
     print("[ERROR]", e)
     task_accomplished = False
     messages = []
-    waypoints = []
 
-# Step 5: Save experiment results (optional)
+# Step 3: Save experiment results
 if pars.save_results:
-    save_results(pars, messages, task_accomplished, waypoints)
+    save_results(pars, messages, task_accomplished, [])

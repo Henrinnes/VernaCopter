@@ -96,4 +96,9 @@ class One_shot_parameters:
 
         self.STL_included = True                     # Include STL in the system
 
-        self.deploy_on_drone = True                  # Physical deployment
+        # Physical deployment
+        self.deploy_on_drone = True                  # Send trajectory to Crazyflie after planning
+        self.drone_uri = None                        # None = auto-scan; or e.g. "radio://0/80/2M/E7E7E7E701"
+        self.scale_factor = 0.3                      # Scale trajectory to physical room (0.3 → 10 m sim = 3 m real)
+        self.waypoint_duration = 2.5                 # Seconds per waypoint move
+        self.takeoff_height = 0.4                    # Takeoff hover height in metres
